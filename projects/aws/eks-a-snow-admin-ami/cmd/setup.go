@@ -18,10 +18,11 @@ var setupCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(setupCmd)
+	setupCmd.Flags().StringVar(&input.S3Bucket, "bucket", "", "S3 Bucket to store AMI converted to RAW format")
 }
 
 func setup(cmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 
-	return snow.SetupAdminAMIPipeline(ctx)
+	return snow.SetupAdminAMIPipeline(ctx, input)
 }

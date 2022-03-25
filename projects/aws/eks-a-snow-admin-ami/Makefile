@@ -25,16 +25,17 @@ IMAGE_NAMES=
 
 EKSA_VERSION?=v0.7.0
 EKSA_MANIFEST?=https://anywhere-assets.eks.amazonaws.com/releases/eks-a/manifest.yaml
+RAW_S3_BUCKET?=$(ARTIFACTS_BUCKET)
 
 include $(BASE_DIRECTORY)/Common.mk
 
 .PHONY: setup
 setup: binaries
-	$(OUTPUT_BIN_DIR)/$(subst /,-,$(BINARY_PLATFORMS))/eks-a-snow-admin-ami setup
+	$(OUTPUT_BIN_DIR)/$(subst /,-,$(BINARY_PLATFORMS))/eks-a-snow-admin-ami setup --bucket $(RAW_S3_BUCKET)
 
 .PHONY: build-ami
 build-ami: binaries
-	$(OUTPUT_BIN_DIR)/$(subst /,-,$(BINARY_PLATFORMS))/eks-a-snow-admin-ami build --eksa-version $(EKSA_VERSION) --eksa-release-manifest-url $(EKSA_MANIFEST)
+	$(OUTPUT_BIN_DIR)/$(subst /,-,$(BINARY_PLATFORMS))/eks-a-snow-admin-ami build --eksa-version $(EKSA_VERSION) --eksa-release-manifest-url $(EKSA_MANIFEST) --bucket $(RAW_S3_BUCKET) 
 
 $(REPO):
 	@mkdir $@

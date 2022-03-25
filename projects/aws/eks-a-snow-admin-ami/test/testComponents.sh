@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INSTANCE_TYPE=${INSTANCE_TYPE:-'t2.large'}
-AMI_ID=${AMI_ID:-'ami-0892d3c7ee96c0bf7'}
+AMI_ID=${AMI_ID:-'ami-0baebd2c53afce272'}
 KEY_NAME=$1
 KEY_PATH=$2
 USER=ubuntu

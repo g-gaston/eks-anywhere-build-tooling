@@ -2,6 +2,7 @@
 
 set -e
 set -o pipefail
+set -x
 
 AMI_ID=$1
 INSTANCE_TYPE=$2 # t2.large
@@ -13,7 +14,8 @@ PHASES=$7 # phases to run with awstoe
 PARAMETERS=$8 # parameters to pass to awstoe run (optional)
 
 echo "Starting test instance"
-instance_id=$(aws ec2 run-instances --image-id $AMI_ID --count 1 --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --output text --query 'Instances[*].InstanceId')
+device_mapping='DeviceName=/dev/sda1,Ebs={VolumeSize=32}'
+instance_id=$(aws ec2 run-instances --image-id $AMI_ID --count 1 --block-device-mappings $device_mapping --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --output text --query 'Instances[*].InstanceId')
 echo "Waiting for $instance_id to be running"
 aws ec2 wait instance-running --instance-ids $instance_id
 
@@ -22,7 +24,10 @@ user_host=$USER@$public_dns
 
 echo "Waiting for ssh in $instance_id to be ready"
 # TODO: make this more robust with some kind of retry and timeout
-ssh -i $KEY_PATH -o StrictHostKeyChecking=no $user_host "ls 2>&1"
+until ssh -i $KEY_PATH -o StrictHostKeyChecking=no -o ConnectTimeout=30 $user_host "ls 2>&1"
+do
+	sleep 2
+done
 
 echo "Instance $instance_id is ready"
 
@@ -50,7 +55,8 @@ awstoe_command="./bin/awstoe run --documents $DOCUMENTS_ARG --phases $PHASES"
 [[ ! -z "$PARAMETERS" ]] && awstoe_command="$awstoe_command --parameters $PARAMETERS"
 
 echo "Running awstoe in instance"
-awstoe_response=$(ssh -i $KEY_PATH -o StrictHostKeyChecking=no $user_host "$awstoe_command")
+awstoe_response=$(ssh -i $KEY_PATH -o StrictHostKeyChecking=no $user_host "$awstoe_command" || true)
+echo $awstoe_response
 
 awstoe_status=$(echo $awstoe_response | jq -r '.status' -)
 remote_log_path=$(echo $awstoe_response | jq -r '.logUrl' -)

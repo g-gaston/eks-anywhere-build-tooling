@@ -19,6 +19,16 @@ func (p *Pipeline) Deploy(ctx context.Context, session *session.Session) error {
 		return err
 	}
 
+	var distributionConfigARN *string
+
+	if p.ConversionFormat != "" {
+		arn, err := p.setupDistributionConfig(ctx, session)
+		if err != nil {
+			return err
+		}
+		distributionConfigARN = &arn
+	}
+
 	recipeArn, err := p.Recipe.Deploy(ctx, session)
 	if err != nil {
 		return err
@@ -32,6 +42,7 @@ func (p *Pipeline) Deploy(ctx context.Context, session *session.Session) error {
 		Description:                    aws.String(p.Description),
 		ImageRecipeArn:                 aws.String(recipeArn),
 		InfrastructureConfigurationArn: aws.String(infraConfigARN),
+		DistributionConfigurationArn:   distributionConfigARN,
 	})
 	if err != nil && !isAlreadyExist(err) {
 		return errors.Wrapf(err, "failed creating pipeline %s", p.Name)

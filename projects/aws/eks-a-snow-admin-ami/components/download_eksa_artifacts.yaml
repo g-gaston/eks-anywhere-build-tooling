@@ -6,10 +6,10 @@ parameters:
       type: string
       default: '/usr/lib/eks-a/manifests'
       description: The full path where eks-a manifests will be downloaded
-  - ImagesTarPath:
+  - ArtifactsTarPath:
       type: string
-      default: '/usr/lib/eks-a/images/images.tar'
-      description: The path where the tar containing all eks-a container images will be stored
+      default: '/usr/lib/eks-a/artifacts/artifacts.tar'
+      description: The path where the tar containing all eks-a container artifacts will be stored
 phases:
   - name: build
     steps:
@@ -18,15 +18,18 @@ phases:
         inputs:
           commands:
             - MANIFESTS_PATH='{{ ManifestsPath }}'
-            - mkdir -p $MANIFESTS_PATH
-            - eksctl anywhere download artifacts --retain-dir --download-dir $MANIFESTS_PATH -v4
+            - sudo mkdir -p $MANIFESTS_PATH
+            - sudo eksctl anywhere download artifacts --retain-dir --download-dir $MANIFESTS_PATH -v4
+            - sudo chmod -R a+r $MANIFESTS_PATH
       - name: DownloadImages
         action: ExecuteBash
         inputs:
           commands:
-            - IMAGES_PATH='{{ ImagesTarPath }}'
-            - mkdir -p $(dirname $IMAGES_PATH) 
-            - eksctl anywhere download images -o $IMAGES_PATH -v4
+            - ARTIFACTS_PATH='{{ ArtifactsTarPath }}'
+            - ARTIFACTS_NAME_DIR=$(dirname $ARTIFACTS_PATH)
+            - sudo mkdir -p $ARTIFACTS_NAME_DIR
+            - sudo eksctl anywhere download images -o $ARTIFACTS_PATH -v4
+            - sudo chmod -R a+r $ARTIFACTS_NAME_DIR
   - name: validate
     steps:
       - name: VerifyManifests
@@ -35,7 +38,7 @@ phases:
           commands:
             - MANIFESTS_PATH='{{ ManifestsPath }}'
             - |
-              if type -d $MANIFESTS_PATH; then
+              if test -d $MANIFESTS_PATH; then
                   echo "manifests dir exists."
                   exit 0
               else
@@ -46,12 +49,12 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            - IMAGES_PATH='{{ ImagesTarPath }}'
+            - ARTIFACTS_PATH='{{ ArtifactsTarPath }}'
             - |
-              if type -f $IMAGES_PATH; then
-                  echo "Images tarball exists."
+              if test -f $ARTIFACTS_PATH; then
+                  echo "Artifacts tarball exists."
                   exit 0
               else
-                  echo "Images tarball does not exist. Failing."
+                  echo "Artifacts tarball does not exist. Failing."
                   exit 1
               fi

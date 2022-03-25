@@ -33,6 +33,7 @@ func (p *Pipeline) setupInfraConfig(ctx context.Context, session *session.Sessio
 		Name:                aws.String(name),
 		InstanceProfileName: &instanceProfileName,
 		InstanceTypes:       aws.StringSlice([]string{"m4.2xlarge"}),
+		
 	})
 
 	if err != nil && !isAlreadyExist(err) {

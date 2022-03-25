@@ -6,9 +6,12 @@ import (
 )
 
 type Pipeline struct {
-	Name        string
-	Description string
-	Recipe      *recipes.Recipe
+	Name             string
+	Description      string
+	S3Bucket         string
+	S3Prefix         string
+	ConversionFormat string
+	Recipe           *recipes.Recipe
 }
 
 func (p *Pipeline) ARN(account, region string) string {

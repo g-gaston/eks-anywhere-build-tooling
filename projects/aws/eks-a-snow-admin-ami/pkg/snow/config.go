@@ -12,23 +12,23 @@ import (
 	"github.com/aws/eks-anywhere-build-tooling/projects/aws/eks-a-snow-admin-ami/pkg/recipes"
 )
 
-func defaultSnowAdminAMIPipeline() *pipelines.Pipeline {
-	return snowAdminAMIPipelineForEKSA(nil)
-}
-
 func snowAdminAMIPipelineForEKSA(input *AdminAMIInput) *pipelines.Pipeline {
 	return &pipelines.Pipeline{
-		Name:        "Snow EKS-A Admin AMI pipeline",
-		Description: "Pipeline to build AMI to run EKS-A on Snow devices with the CAPAS provider",
-		Recipe:      snowAdminAMIRecipe(input),
+		Name:             "Snow EKS-A Admin AMI pipeline",
+		Description:      "Pipeline to build AMI to run EKS-A on Snow devices with the CAPAS provider",
+		S3Bucket:         input.S3Bucket,
+		S3Prefix:         "snow-admin-ami/",
+		ConversionFormat: "RAW",
+		Recipe:           snowAdminAMIRecipe(input),
 	}
 }
 
 func snowAdminAMIRecipe(input *AdminAMIInput) *recipes.Recipe {
 	version := "0.0.0"
 	description := "Base recipe for Snow EKS-A Admin AMI"
-	if input != nil {
+	if input.EKSAVersion != "" {
 		version = strings.TrimPrefix(input.EKSAVersion, "v")
+		version = strings.Split(version, "-")[0]
 		description = fmt.Sprintf("Recipe for Snow EKS-A [%s] Admin AMI", input.EKSAVersion)
 	}
 

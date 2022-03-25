@@ -10,8 +10,8 @@ import (
 
 // buildCmd represents the build command
 var buildCmd = &cobra.Command{
-	Use:   "build",
-	Short: "Build Snow EKS-A Admin AMI",
+	Use:          "build",
+	Short:        "Build Snow EKS-A Admin AMI",
 	SilenceUsage: true,
 	RunE:         build,
 }
@@ -23,6 +23,7 @@ func init() {
 
 	buildCmd.Flags().StringVar(&input.EKSAVersion, "eksa-version", "", "EKS-A version to embed in the snow Admin AMI")
 	buildCmd.Flags().StringVar(&input.EKSAReleaseURL, "eksa-release-manifest-url", "", "EKS-A release manifest URL to pull EKS-A version from")
+	buildCmd.Flags().StringVar(&input.S3Bucket, "bucket", "", "S3 Bucket to store AMI converted to RAW format")
 }
 
 var buildVersion = "v0.0"
