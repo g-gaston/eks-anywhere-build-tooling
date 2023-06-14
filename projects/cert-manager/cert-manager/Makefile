@@ -17,7 +17,7 @@ CERT_MANAGER_CTL_IMAGE_COMPONENT=cert-manager/cert-manager-ctl
 IMAGE_NAMES=cert-manager-acmesolver cert-manager-cainjector cert-manager-controller cert-manager-webhook cert-manager-ctl
 
 BINARY_TARGET_FILES=cert-manager-acmesolver cert-manager-cainjector cert-manager-controller cert-manager-webhook cert-manager-ctl
-SOURCE_PATTERNS=github.com/cert-manager/cert-manager/cmd/acmesolver github.com/cert-manager/cert-manager/cmd/cainjector github.com/cert-manager/cert-manager/cmd/controller github.com/cert-manager/cert-manager/cmd/webhook github.com/cert-manager/cert-manager/cmd/ctl
+SOURCE_PATTERNS=. . . . .
 GO_MOD_PATHS=cmd/acmesolver cmd/cainjector cmd/controller cmd/webhook cmd/ctl
 
 HAS_HELM_CHART=true
