@@ -20,6 +20,10 @@ BINARY_TARGET_FILES=cert-manager-acmesolver cert-manager-cainjector cert-manager
 SOURCE_PATTERNS=. . . . .
 GO_MOD_PATHS=cmd/acmesolver cmd/cainjector cmd/controller cmd/webhook cmd/ctl
 
+# by default the first target is assumed to be the primary and will produce a attribution with no prefix
+# for this build we want to prefix all the files
+CERT_MANAGER_ACMESOLVER_ATTRIBUTION_OVERRIDE=cert-manager-acmesolver
+
 HAS_HELM_CHART=true
 HELM_DIRECTORY=deploy/charts/cert-manager
 HELM_IMAGE_LIST=cert-manager/cert-manager-cainjector cert-manager/cert-manager-controller cert-manager/cert-manager-webhook cert-manager/cert-manager-ctl

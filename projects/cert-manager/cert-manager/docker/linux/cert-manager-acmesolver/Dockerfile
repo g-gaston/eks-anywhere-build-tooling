@@ -7,7 +7,7 @@ ARG TARGETOS
 COPY _output/files/cert-manager-acmesolver /
 COPY _output/bin/cert-manager/$TARGETOS-$TARGETARCH/cert-manager-acmesolver /usr/bin/acmesolver
 COPY _output/cert-manager-acmesolver/LICENSES /LICENSES
-COPY ATTRIBUTION.txt /ATTRIBUTION.txt
+COPY CERT_MANAGER_ACMESOLVER_ATTRIBUTION.txt /ATTRIBUTION.txt
 
 USER 1000
 ENTRYPOINT ["/usr/bin/acmesolver"]
